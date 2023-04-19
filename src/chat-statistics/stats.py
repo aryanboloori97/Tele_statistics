@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 from typing import Union
+from collections import defaultdict
+
 
 from hazm import Normalizer, word_tokenize
 from loguru import logger
@@ -61,10 +63,19 @@ class ChatStatistics(object):
         logger.info("Successfully Done!")
         logger.info("Please go to src/data path to see your png file :)")
 
+    def users_most_replied(self, number:int=1):
+        list_of_users = defaultdict()
+        for message in self.input_json['messages']:
+            if message['type'] == 'message':
+                list_of_users[(message['from'])] = 0
+        for message in self.input_json['messages']:
+            if message.get('reply_to_message_id'):
+                list_of_users[(message['from'])] +=1
 
-
-
-
+        list_of_users_sorted = sorted(list_of_users.items(), key=lambda k_v: k_v[1], reverse=True)
+        for item in list_of_users_sorted[0:number]:
+        
+            print(f'User: {item[0]}, Replies: {item[1]}')
 
 
 
@@ -75,5 +86,6 @@ class ChatStatistics(object):
 
 if __name__ == '__main__':
     test = ChatStatistics(input_json=DATA_DIR / 'result.json')
-    test.generate_word_cloud('first.png')
+    # test.generate_word_cloud('first.png')
+    test.users_most_replied(30)
     
