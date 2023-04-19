@@ -5,46 +5,31 @@ from typing import Union
 from hazm import Normalizer, word_tokenize
 from loguru import logger
 from wordcloud import WordCloud
- 
+
 from src.data import DATA_DIR
 
 
 class ChatStatistics(object):
-    
     """
-    Generates chat statistics for any given JSON file of telegram groups or channels
-    
+    Generates chat statistics for any given JSON file of telegram groups or channels 
     """
-    
-    
-    
-    def __init__(self, input_json:Union[str, Path]):
-        
-        
+    def __init__(self, input_json:Union[str, Path]): 
         """
-        
         :param input_json: This is the address of JSON file in pathlib.Path format, or in string representing the absoulte address
-        
-        
         """
         logger.info(f'Loading chat data from {input_json}...')
         self.normalizer = Normalizer()
-
         with open(input_json, 'r') as f:
             self.input_json = json.load(f)
-            
-            
         logger.info('Loading chat data from  " DATA_DIR / stop_words.txt " ...') 
         # Load the stop words, which should be removed
         with open(DATA_DIR / 'stop_words.txt', 'r') as f:
             self.stop_words = list(map(str.strip, (list(f.readlines()))))
-        
+    
         self.stop_words = list(map(self.normalizer.normalize, self.stop_words))
 
     def generate_word_cloud(self, output_name:str):
-        """
-        
-        This method is used to figure out which words exist most in any telegram group or channel
+        """ This method is used to figure out which words exist most in any telegram group or channel
         
         :param output_name : This argument is the name of an output png file as string on which the word cloud picture will be saved.
         Note: The output png file will be saved in this path:
@@ -75,6 +60,20 @@ class ChatStatistics(object):
         wordcloud.to_file(Path(DATA_DIR /output_name))
         logger.info("Successfully Done!")
         logger.info("Please go to src/data path to see your png file :)")
+
+
+
+
+
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
     test = ChatStatistics(input_json=DATA_DIR / 'result.json')
     test.generate_word_cloud('first.png')
+    
